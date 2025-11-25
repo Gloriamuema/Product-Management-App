@@ -1,33 +1,12 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <form @submit.prevent="submit" class="bg-white p-6 rounded shadow w-96">
-      <h2 class="text-xl font-bold mb-4 text-[#000080]">Login</h2>
-
-      <div class="mb-4">
-        <label class="block mb-1">Username</label>
-        <input v-model="username" class="border p-2 w-full rounded" required />
-      </div>
-
-      <div class="mb-4">
-        <label class="block mb-1">Password</label>
-       <input 
-  v-model="username" 
-  autocomplete="off"
-/>
-
-<input 
-  v-model="password" 
-  type="password" 
-  autocomplete="off"
-  spellcheck="false"
-/>
-
-      </div>
-
-      <button class="bg-[#000080] text-white px-4 py-2 rounded w-full">Login</button>
-
-      <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
+  <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+    <h2 class="text-2xl font-bold text-[#000080] mb-4">Login</h2>
+    <form @submit.prevent="loginUser">
+      <input v-model="username" type="text" placeholder="Username" class="border p-2 w-full mb-2 rounded" />
+      <input v-model="password" type="password" placeholder="Password" class="border p-2 w-full mb-2 rounded" />
+      <button type="submit" class="bg-[#000080] text-white px-4 py-2 rounded w-full">Login</button>
     </form>
+    <p v-if="message" class="mt-2 text-red-600">{{ message }}</p>
   </div>
 </template>
 
@@ -36,19 +15,18 @@ import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 
-const auth = useAuthStore()
-const router = useRouter()
 const username = ref('')
 const password = ref('')
-const error = ref('')
+const message = ref('')
+const auth = useAuthStore()
+const router = useRouter()
 
-async function submit() {
-  error.value = ''
+function loginUser() {
   try {
-    await auth.login({ username: username.value.trim(), password: password.value })
-    router.push('/products') // redirect on success
+    auth.login({ username: username.value, password: password.value })
+    router.push('/products')
   } catch (err) {
-    error.value = err.message
+    message.value = err.message
   }
 }
 </script>

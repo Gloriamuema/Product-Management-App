@@ -2,30 +2,24 @@ import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user') || 'null'),
+    user: JSON.parse(localStorage.getItem('user')) || null,
   }),
   getters: {
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: (state) => !!state.user,
   },
   actions: {
-    async login({ username, password }) {
-      const res = await fetch('https://dummyjson.com/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Invalid credentials')
-      this.token = data.token
-      this.user = data
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data))
+    login({ username, password }) {
+      // Use hardcoded username/password
+      if (username === 'admin' && password === '123') {
+        const userData = { username: 'admin' }
+        this.user = userData
+        localStorage.setItem('user', JSON.stringify(userData))
+      } else {
+        throw new Error('Invalid credentials')
+      }
     },
     logout() {
-      this.token = null
       this.user = null
-      localStorage.removeItem('token')
       localStorage.removeItem('user')
     },
   },
